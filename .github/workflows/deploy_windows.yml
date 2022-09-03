@@ -1,0 +1,63 @@
+name: Deploy_Windows
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy_windows_x86:
+    name: windows deploy
+    runs-on: windows-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: vcpkg install libjpeg-turbo libpng --triplet=x86-windows-static
+
+    - name: Setup MSVC
+      uses: TheMrMilchmann/setup-msvc-dev@v2
+      with:
+        arch: x86
+
+    - name: Setup Ninja Build
+      uses: turtlesec-no/get-ninja@main
+
+    - name: CMake build
+      run: |
+        cmake --preset windows-x86-release-static -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
+        cmake --build --preset windows-x86-release-static
+
+    - name: Create artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: xbrz-windows-x86
+        path: ./out/build/windows-x86-release-static/xbrz.exe
+
+  deploy_windows_x64:
+    name: windows deploy
+    runs-on: windows-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: vcpkg install libjpeg-turbo libpng --triplet=x64-windows-static
+
+    - name: Setup MSVC
+      uses: TheMrMilchmann/setup-msvc-dev@v2
+      with:
+        arch: x64
+
+    - name: Setup Ninja Build
+      uses: turtlesec-no/get-ninja@main
+
+    - name: CMake build
+      run: |
+        cmake --preset windows-x64-release-static -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
+        cmake --build --preset windows-x64-release-static
+
+    - name: Create artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: xbrz-windows-x64
+        path: ./out/build/windows-x64-release-static/xbrz.exe

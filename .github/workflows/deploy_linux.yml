@@ -1,0 +1,45 @@
+name: Deploy_Linux
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy_linux:
+    name: linux deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: |
+        sudo apt install -yq --no-install-suggests --no-install-recommends libpng-dev libjpeg-dev > /dev/null
+
+    - name: Setup Ninja Build
+      uses: turtlesec-no/get-ninja@main
+
+    - name: CMake build
+      run: |
+        cmake CMakeLists.txt -G "Ninja"
+        cmake --build . --config Release
+
+    - name: Install LinuxDeploy
+      run: |
+        wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage -N
+        chmod +x linuxdeploy-x86_64.AppImage
+
+    - name: Create AppImage
+      run: |
+        ./linuxdeploy-x86_64.AppImage \
+          --executable=xbrz \
+          --appdir out/appdir \
+          --desktop-file=pkg/linux/xbrz.desktop \
+          --icon-file=pkg/linux/icon.png \
+          --output=appimage
+        mv -f xbrz-*-x86_64.AppImage xbrz
+
+    - name: Create artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: xbrz-linux-x86_64.AppImage
+        path: xbrz

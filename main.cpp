@@ -7,7 +7,7 @@
 //
 
 #include <iostream>
-#include "xbrz/xbrz.h"
+#include "xbrzlib/xbrz.h"
 #include <sstream>
 
 #define cimg_use_png

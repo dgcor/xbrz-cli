@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=xbrz-cli
+GenericName=xbrz-cli
+Exec=xbrz
+Icon=icon
+Terminal=true
+Type=Application
+X-DCOP-ServiceType=Multi
+X-KDE-StartupNotify=true
+Categories=Utility;
